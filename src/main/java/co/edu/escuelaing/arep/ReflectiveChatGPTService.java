@@ -7,11 +7,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import com.google.gson.JsonObject;
 
+/**
+ * @author Juan Pablo Daza Pereira
+ */
 public class ReflectiveChatGPTService {
 
     public static ReflectiveChatGPTService instance;
     private static final String USER_AGENT = "Mozilla/5.0";
-    private static final String GET_URL = "http://localhost:35001/compreflex?comando=";
+    private static final String GET_URL = "http://localhost:45000/compreflex?comando=";
 
     private ReflectiveChatGPTService() {
     }
@@ -31,7 +34,7 @@ public class ReflectiveChatGPTService {
         System.out.println("GET Response Code :: " + responseCode);
         JsonObject responseJson = new JsonObject();
 
-        if (responseCode == HttpURLConnection.HTTP_OK) { // success
+        if (responseCode == HttpURLConnection.HTTP_OK) {
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
             StringBuffer response = new StringBuffer();
