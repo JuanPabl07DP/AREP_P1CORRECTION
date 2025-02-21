@@ -87,13 +87,23 @@ public class ReflectiveChatGPTWeb {
                 "</body>" +
                 "</html>";
     }
-
-    private static String getErrorPage() {
-        return null;
-    }
-
     private static String getClientResponse(URI requestURI) {
         return null;
     }
 
+    private static String getErrorPage() {
+        return "HTTP/1.1 404 Not Found\n" +
+                "Content-Type: text/html\n" +
+                "\n" +
+                "<!DOCTYPE html>" +
+                "<html>" +
+                "<head>" +
+                "<meta charset=\"UTF-8\">" +
+                "<title>Not Found</title>\n" +
+                "</head>" +
+                "<body>" +
+                "<h1>404 Not Found</h1>" +
+                "</body>" +
+                "</html>";
+    }
 }
