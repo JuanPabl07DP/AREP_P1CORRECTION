@@ -9,6 +9,9 @@ import java.net.Socket;
 import java.net.URI;
 import com.google.gson.JsonObject;
 
+/**
+ * @author Juan Pablo Daza Pereira
+ */
 public class ReflectiveChatGPTWeb {
     public static void main(String[] args) {
         try {
