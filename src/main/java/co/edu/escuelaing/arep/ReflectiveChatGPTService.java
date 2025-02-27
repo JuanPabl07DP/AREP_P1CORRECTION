@@ -5,33 +5,44 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * @author Juan Pablo Daza Pereira
  */
 public class ReflectiveChatGPTService {
 
-    public static ReflectiveChatGPTService instance;
+    private static ReflectiveChatGPTService instance;
     private static final String USER_AGENT = "Mozilla/5.0";
     private static final String GET_URL = "http://localhost:45000/compreflex?comando=";
 
     private ReflectiveChatGPTService() {
     }
+
     public static ReflectiveChatGPTService getInstance() {
         if (instance == null) {
             instance = new ReflectiveChatGPTService();
         }
         return instance;
     }
+
     public JsonObject getReflectiveChatCommand(String requestQuery) throws IOException {
-        URL obj = new URL(GET_URL + requestQuery.split("=")[1]);
+        String command = requestQuery.split("=", 2)[1];
+
+        String encodedCommand = URLEncoder.encode(command, "UTF-8");
+
+        URL obj = new URL(GET_URL + encodedCommand);
+
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("GET");
         con.setRequestProperty("User-Agent", USER_AGENT);
 
         int responseCode = con.getResponseCode();
-        System.out.println("GET Response Code :: " + responseCode);
+        System.out.println("Backend Request: " + obj.toString());
+        System.out.println("Backend Response Code: " + responseCode);
+
         JsonObject responseJson = new JsonObject();
 
         if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -44,12 +55,20 @@ public class ReflectiveChatGPTService {
             }
             in.close();
 
-            System.out.println(response.toString());
-            responseJson.addProperty("response", response.toString());
+            String responseString = response.toString();
+            System.out.println("Backend Response: " + responseString);
+
+            try {
+                JsonObject backendResponse = JsonParser.parseString(responseString).getAsJsonObject();
+                responseJson = backendResponse;
+            } catch (Exception e) {
+                responseJson.addProperty("error", "Failed to parse backend response: " + e.getMessage());
+                responseJson.addProperty("rawResponse", responseString);
+            }
         } else {
-            System.out.println("GET request not worked");
+            responseJson.addProperty("error", "Backend request failed with code: " + responseCode);
         }
-        System.out.println("GET DONE");
+
         return responseJson;
     }
 }
